@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request,jsonify
-from flask_cors import CORS,cross_origin
+from flask_cors import CORS,cross_origin #flask_cors is used to prevent server erroe because of region
 import requests
 from bs4 import BeautifulSoup as bs
 from urllib.request import urlopen as uReq
@@ -18,8 +18,8 @@ def homePage():
 def index():
     if request.method == 'POST':
         try:
-            searchString = request.form['content'].replace(" ","")
-            flipkart_url = "https://www.flipkart.com/search?q=" + searchString
+            searchString = request.form['content'].replace(" ","") #fetching from index file
+            flipkart_url = "https://www.flipkart.com/search?q=" + searchString #searching for the product, searchstringis a parameter
             uClient = uReq(flipkart_url)
             flipkartPage = uClient.read()
             uClient.close()
@@ -71,10 +71,11 @@ def index():
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
                 reviews.append(mydict)
-            client = pymongo.MongoClient("mongodb+srv://pwskills:pwskills@cluster0.ln0bt5m.mongodb.net/?retryWrites=true&w=majority")
+            client = pymongo.MongoClient("mongodb+srv://ansh:ansh@cluster0.u7bbnag.mongodb.net/?retryWrites=true&w=majority")
             db = client['review_scrap']
             review_col = db['review_scrap_data']
             review_col.insert_many(reviews)
+            
             return render_template('results.html', reviews=reviews[0:(len(reviews)-1)])
         except Exception as e:
             print('The Exception message is: ',e)
